@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Event Form</title>
+    <script src="js/form.js" defer></script>
 </head>
 <body>
 
-<form action="#" method="POST">
+<form id="event-form" action="#" method="POST">
     <div>
         <label for="event-name">Event Name:</label>
         <input type="text" id="event-name" name="event-name" placeholder="Example: Charity Run" required>

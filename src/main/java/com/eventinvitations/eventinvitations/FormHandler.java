@@ -1,13 +1,13 @@
 package com.eventinvitations.eventinvitations;// Example Form Handler Servlet. You may use to help with assignments.
 
 // Import Servlet Libraries
-
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Objects;
+
+// Import Java Libraries
+import java.io.*;
+import java.util.*;
+import java.lang.*;
 
 // formHandler class
 // Generic form handler -- Echo all the parameters and values
@@ -38,7 +38,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
    PrintWriter toClient = response.getWriter ();
 
    String para;
-   Enumeration<String> paraNames = request.getParameterNames();
+   Enumeration paraNames = request.getParameterNames();
 
    toClient.println("<html>");
    toClient.println("<head>");
@@ -63,7 +63,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
    while (paraNames.hasMoreElements())
    {  // For each parameter name.
-      para = paraNames.nextElement();
+      para = (String)paraNames.nextElement();
       if (!para.equalsIgnoreCase("submit"))
       {
          toClient.println("  <tr>");
@@ -71,14 +71,14 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
          String[] values = request.getParameterValues(para);
 
-         if (values != null && !values[0].isEmpty())
+         if (values != null && !values[0].equals(""))
             toClient.println("    <td>" + values[0] + "</td></tr>");
          else
             toClient.println("    <td>&nbsp;</td></tr>");
 
-         for (int i = 1; i < Objects.requireNonNull(values).length; i++)
+         for (int i = 1; i < values.length; i++)
          {
-            if (!values[i].isEmpty())
+            if (!values[i].equals(""))
             {
                toClient.println("  <tr>");
                toClient.println("    <td style=\"width: 20%\" width=\"20%\">&nbsp;</td>");

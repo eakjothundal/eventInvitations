@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<form id="event-form" action="#" method="POST">
+<form id="event-form" action="submitForm" method="POST">
     <div>
         <label for="event-name">Event Name:</label>
         <input type="text" id="event-name" name="event-name" placeholder="Example: Charity Run" required>
@@ -21,7 +21,7 @@
     </div>
     <div>
         <label for="event-time">Time:</label>
-        <input type="time" id="event-time" name="event-time" placeholder="Example: 14:30" required>
+        <input type="time" id="event-time" name="event-time" placeholder="Example: 07:30" required>
     </div>
     <div>
         <label for="event-location">Location:</label>

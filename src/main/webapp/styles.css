@@ -1,0 +1,68 @@
+body {
+    background-color: #A89FBF; /* Pastel Purple */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #F3E9F1; /* Light Pastel Pink for Text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+form {
+    background-color: #FFFFFF; /* White background for form */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    transition: transform 0.3s;
+}
+
+form:hover {
+    transform: translateY(-10px);
+}
+
+div {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #514D66; /* Darker Purple for Labels */
+    font-weight: 600;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #C0BCC8; /* Soft Grey Border for Input Fields */
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: #A89FBF; /* Pastel Purple for Focus Effect */
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #A89FBF; /* Pastel Purple Background for Button */
+    color: #FFFFFF; /* White Color for Button Text */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block; /* Make button a block element */
+    margin: 0 auto; /* Center the button */
+}
+
+button:hover {
+    background-color: #8F87A1; /* Darker Pastel Purple for Button Hover Effect */
+}

@@ -6,35 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Event Form</title>
-    <script src="js/form.js" defer></script>
 </head>
 <body>
-
-<form id="event-form" action="submitForm" method="POST">
+<form id="event-form" method="post">
     <div>
-        <label for="event-name">Event Name:</label>
-        <input type="text" id="event-name" name="event-name" placeholder="Example: Charity Run" required>
+        <label for="eventName">Event Name:</label>
+        <input type="text" id="eventName" name="eventName" placeholder="Example: Charity Run" required>
     </div>
     <div>
-        <label for="event-date">Date:</label>
-        <input type="date" id="event-date" name="event-date" placeholder="Example: 2023-09-30" required>
+        <label for="eventDate">Date:</label>
+        <input type="date" id="eventDate" name="eventDate" placeholder="Example: 2023-09-30" required>
     </div>
     <div>
-        <label for="event-time">Time:</label>
-        <input type="time" id="event-time" name="event-time" placeholder="Example: 07:30" required>
+        <label for="eventTime">Time:</label>
+        <input type="time" id="eventTime" name="eventTime" placeholder="Example: 07:30" required>
     </div>
     <div>
-        <label for="event-location">Location:</label>
-        <input type="text" id="event-location" name="event-location" placeholder="Example: Central Park" required>
+        <label for="eventLocation">Location:</label>
+        <input type="text" id="eventLocation" name="eventLocation" placeholder="Example: Central Park" required>
     </div>
     <div>
-        <label for="event-description">Description:</label>
-        <textarea id="event-description" name="event-description" rows="4" cols="50" placeholder="Example: A charity run event to raise funds for a local hospital." required></textarea>
+        <label for="eventDescription">Description:</label>
+        <textarea id="eventDescription" name="eventDescription" rows="4" cols="50"
+                  placeholder="Example: A charity run event to raise funds for a local hospital." required></textarea>
     </div>
     <div>
         <button type="submit">Submit</button>
     </div>
 </form>
 
+
 </body>
+
+<script src="js/form.js"></script>
 </html>

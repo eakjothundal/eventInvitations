@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     const form = document.getElementById('event-form');
 
+    if (!form) return; // exit if the form is not found on the page
+
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const eventNameInput = document.getElementById('eventName');
         const eventLocationInput = document.getElementById('eventLocation');
         const eventDescriptionInput = document.getElementById('eventDescription');
+
+        console.log(`Current date and time: ${now}`);
 
         // Form validation for required fields
         if (!form.checkValidity()) {
@@ -43,9 +47,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             return false;
         }
 
-        form.action = 'submitForm';
+        // Set the action to the EventServlet path and submit the form
+        form.action = 'EventServlet';
         form.submit();
-
-        return true;
     });
 });

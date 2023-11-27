@@ -27,7 +27,7 @@ public class EventServlet extends HttpServlet {
             out.println("<script src='js/form.js'></script>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<form id='eventForm'>");
+            out.println("<form id='eventForm' action='EventServlet' method='post'>");
             out.println("<div><label for='eventName'>Event Name:</label>");
             out.println("<input type='text' id='eventName' name='eventName' required></div>");
             out.println("<div><label for='eventDate'>Date:</label>");
@@ -46,64 +46,57 @@ public class EventServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String actionType = request.getParameter("actionType");
+        if (actionType != null) {
+            if (actionType.equals("Attend")) {
+                countAttend++;
+            } else if (actionType.equals("Not Attend")) {
+                countNotAttend++;
+            }
+        }
+
         response.setContentType("text/html;charset=UTF-8");
-        System.out.println("doPost called");
         try (PrintWriter out = response.getWriter()) {
-            System.out.println("try called");
             String eventName = request.getParameter("eventName");
             String eventDate = request.getParameter("eventDate");
             String eventTime = request.getParameter("eventTime");
             String eventLocation = request.getParameter("eventLocation");
             String eventDescription = request.getParameter("eventDescription");
-            String actionType = request.getParameter("actionType");
 
-            System.out.println("actionType: " + actionType);
+            // Start HTML output
+            out.println("<!DOCTYPE html><html><head><title>Event Confirmation</title>");
+            out.println("<link rel='stylesheet' type='text/css' href='styles.css'></head><body>");
+            out.println("<div class='event-confirmation'>");
 
-            if ("submit".equals(actionType)) {
-                System.out.println("submit called");
-//                 Check if any of the event details are null or empty
-                if (eventName == null || eventDate == null || eventTime == null || eventLocation == null || eventDescription == null) {
-                    out.println("<html><head><title>Error</title></head><body>");
-                    out.println("<h2>Error: Missing event details.</h2>");
-                    out.println("<p>Please go back and fill in all the fields.</p>");
-                    out.println("</body></html>");
-                    return;
-                }
+            // Event details with specific class names
+            out.println("<h2 class='event-confirmation-title'>Event Confirmation</h2>");
+            out.println("<p class='event-confirmation-detail'><strong>Name:</strong> " + eventName + "</p>");
+            out.println("<p class='event-confirmation-detail'><strong>Date:</strong> " + eventDate + "</p>");
+            out.println("<p class='event-confirmation-detail'><strong>Time:</strong> " + eventTime + "</p>");
+            out.println("<p class='event-confirmation-detail'><strong>Location:</strong> " + eventLocation + "</p>");
+            out.println("<p class='event-confirmation-detail'><strong>Description:</strong> " + eventDescription + "</p>");
 
-                // Process the form submission and display event details with confirmation buttons
-                out.println("<!DOCTYPE html><html><head><title>Event Details</title><link rel='stylesheet' type='text/css' href='styles.css'></head><body>");
-                out.println("<h2>Event Details</h2>");
-                out.println("<p>Name: " + eventName + "</p>");
-                out.println("<p>Date: " + eventDate + "</p>");
-                out.println("<p>Time: " + eventTime + "</p>");
-                out.println("<p>Location: " + eventLocation + "</p>");
-                out.println("<p>Description: " + eventDescription + "</p>");
-                out.println("<form action='EventServlet' method='POST'>");
-                out.println("<input type='hidden' name='eventName' value='" + eventName + "'>");
-                out.println("<input type='hidden' name='eventDate' value='" + eventDate + "'>");
-                out.println("<input type='hidden' name='eventTime' value='" + eventTime + "'>");
-                out.println("<input type='hidden' name='eventLocation' value='" + eventLocation + "'>");
-                out.println("<input type='hidden' name='eventDescription' value='" + eventDescription + "'>");
-                out.println("<input type='submit' name='actionType' value='Will be there!'>");
-                out.println("<input type='submit' name='actionType' value='Will not make it...'>");
-                out.println("</form>");
-                out.println("</body></html>");
-            } else if ("Will be there!".equals(actionType) || "Will not make it...".equals(actionType)) {
-                // Increment the counts accordingly
-                if ("Will be there!".equals(actionType)) {
-                    countAttend++;
-                } else {
-                    countNotAttend++;
-                }
+            // Attendee count with specific class names
+            out.println("<p class='event-confirmation-count'><strong>Attendees:</strong> " + countAttend + "</p>");
+            out.println("<p class='event-confirmation-count'><strong>Not Attending:</strong> " + countNotAttend + "</p>");
 
-                // Redisplay event details with updated confirmation count
-                out.println("<html><head><title>Event Confirmation</title><link rel='stylesheet' type='text/css' href='styles.css'></head><body>");
-                out.println("<h2>Event Confirmation</h2>");
-                out.println("<p>Event: " + eventName + "</p>");
-                out.println("<p>Attendees: " + countAttend + "</p>");
-                out.println("<p>Not Attending: " + countNotAttend + "</p>");
-                out.println("</body></html>");
-            }
+            // Form with hidden input fields and confirmation buttons
+            out.println("<form action='EventServlet' method='POST' class='confirmation-container'>");
+            out.println("<input type='hidden' name='eventName' value='" + eventName + "'>");
+            out.println("<input type='hidden' name='eventDate' value='" + eventDate + "'>");
+            out.println("<input type='hidden' name='eventTime' value='" + eventTime + "'>");
+            out.println("<input type='hidden' name='eventLocation' value='" + eventLocation + "'>");
+            out.println("<input type='hidden' name='eventDescription' value='" + eventDescription + "'>");
+            out.println("<div class='event-confirmation-buttons'>");
+            out.println("<button type='submit' name='actionType' value='Attend' class='event-confirmation-button'>Will be there!</button>");
+            out.println("<button type='submit' name='actionType' value='Not Attend' class='event-confirmation-button'>Will not make it...</button>");
+            out.println("</div>");
+            out.println("</form>");
+
+            out.println("</div>");
+            out.println("</body></html>");
         }
     }
+
 }

@@ -5,7 +5,6 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    color: #F3E9F1; /* Light Pastel Pink for Text */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -65,4 +64,60 @@ button {
 
 button:hover {
     background-color: #8F87A1; /* Darker Pastel Purple for Button Hover Effect */
+}
+
+/* Styles specific to the event confirmation page */
+.event-confirmation {
+    /* Styles specific to the confirmation container */
+    margin: auto;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.event-confirmation-title {
+    /* Title styles */
+    margin-bottom: 20px;
+    color: #514D66;
+}
+
+.event-confirmation-detail {
+    /* Detail paragraph styles */
+    background-color: #f0f0f0;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    color: #514D66;
+}
+
+.event-confirmation-count {
+    /* Attendee count styles */
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.event-confirmation-buttons {
+    /* Button container styles */
+    margin-top: 20px;
+}
+
+.event-confirmation-button {
+    /* Button styles */
+    padding: 10px 15px;
+    margin: 10px;
+    background-color: #A89FBF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.event-confirmation-button:hover {
+    /* Button hover styles */
+    background-color: #8F87A1;
 }

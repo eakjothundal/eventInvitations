@@ -15,36 +15,6 @@ public class EventServlet extends HttpServlet {
     private int countAttend = 0;
     private int countNotAttend = 0;
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            // Write the HTML form directly from the servlet
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Event Form</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='styles.css'>");
-            out.println("<script src='js/form.js'></script>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<form id='eventForm' action='EventServlet' method='post'>");
-            out.println("<div><label for='eventName'>Event Name:</label>");
-            out.println("<input type='text' id='eventName' name='eventName' required></div>");
-            out.println("<div><label for='eventDate'>Date:</label>");
-            out.println("<input type='date' id='eventDate' name='eventDate' required></div>");
-            out.println("<div><label for='eventTime'>Time:</label>");
-            out.println("<input type='time' id='eventTime' name='eventTime' required></div>");
-            out.println("<div><label for='eventLocation'>Location:</label>");
-            out.println("<input type='text' id='eventLocation' name='eventLocation' required></div>");
-            out.println("<div><label for='eventDescription'>Description:</label>");
-            out.println("<textarea id='eventDescription' name='eventDescription' required></textarea></div>");
-            out.println("<div><input type='submit' name='actionType' value='Submit'></div>");
-            out.println("</form>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String actionType = request.getParameter("actionType");

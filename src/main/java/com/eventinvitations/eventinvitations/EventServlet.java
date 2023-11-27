@@ -11,62 +11,88 @@ import java.io.PrintWriter;
 @WebServlet("/EventServlet")
 public class EventServlet extends HttpServlet {
 
-    // Variables to keep track of confirmations
+    // Variables to keep track of event information and confirmations
+    private String eventName;
+    private String eventDate;
+    private String eventTime;
+    private String eventLocation;
+    private String eventDescription;
     private int countAttend = 0;
     private int countNotAttend = 0;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         String actionType = request.getParameter("actionType");
-        if (actionType != null) {
-            if (actionType.equals("Attend")) {
-                countAttend++;
-            } else if (actionType.equals("Not Attend")) {
-                countNotAttend++;
-            }
+
+        // Retrieve event information or keep the previous one if already set
+        String newEventName = request.getParameter("eventName");
+        if (newEventName != null && !newEventName.isEmpty()) {
+            eventName = newEventName;
+        }
+
+        String newEventDate = request.getParameter("eventDate");
+        if (newEventDate != null && !newEventDate.isEmpty()) {
+            eventDate = newEventDate;
+        }
+
+        String newEventTime = request.getParameter("eventTime");
+        if (newEventTime != null && !newEventTime.isEmpty()) {
+            eventTime = newEventTime;
+        }
+
+        String newEventLocation = request.getParameter("eventLocation");
+        if (newEventLocation != null && !newEventLocation.isEmpty()) {
+            eventLocation = newEventLocation;
+        }
+
+        String newEventDescription = request.getParameter("eventDescription");
+        if (newEventDescription != null && !newEventDescription.isEmpty()) {
+            eventDescription = newEventDescription;
+        }
+
+        // Increment counters based on actionType received
+        if ("Attend".equals(actionType)) {
+            countAttend++;
+        } else if ("Not Attend".equals(actionType)) {
+            countNotAttend++;
+        }
+
+        // Reset event and counts if "Restart" is chosen
+        if ("Restart".equals(actionType)) {
+            eventName = null;
+            eventDate = null;
+            eventTime = null;
+            eventLocation = null;
+            eventDescription = null;
+            countAttend = 0;
+            countNotAttend = 0;
+            response.sendRedirect("eventForm.jsp"); // Redirect to the blank event form JSP
+            return;
         }
 
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            String eventName = request.getParameter("eventName");
-            String eventDate = request.getParameter("eventDate");
-            String eventTime = request.getParameter("eventTime");
-            String eventLocation = request.getParameter("eventLocation");
-            String eventDescription = request.getParameter("eventDescription");
-
-            // Start HTML output
             out.println("<!DOCTYPE html><html><head><title>Event Confirmation</title>");
             out.println("<link rel='stylesheet' type='text/css' href='styles.css'></head><body>");
             out.println("<div class='event-confirmation'>");
-
-            // Event details with specific class names
-            out.println("<h2 class='event-confirmation-title'>Event Confirmation</h2>");
-            out.println("<p class='event-confirmation-detail'><strong>Name:</strong> " + eventName + "</p>");
-            out.println("<p class='event-confirmation-detail'><strong>Date:</strong> " + eventDate + "</p>");
-            out.println("<p class='event-confirmation-detail'><strong>Time:</strong> " + eventTime + "</p>");
-            out.println("<p class='event-confirmation-detail'><strong>Location:</strong> " + eventLocation + "</p>");
-            out.println("<p class='event-confirmation-detail'><strong>Description:</strong> " + eventDescription + "</p>");
-
-            // Attendee count with specific class names
-            out.println("<p class='event-confirmation-count'><strong>Attendees:</strong> " + countAttend + "</p>");
-            out.println("<p class='event-confirmation-count'><strong>Not Attending:</strong> " + countNotAttend + "</p>");
-
-            // Form with hidden input fields and confirmation buttons
-            out.println("<form action='EventServlet' method='POST' class='confirmation-container'>");
-            out.println("<input type='hidden' name='eventName' value='" + eventName + "'>");
-            out.println("<input type='hidden' name='eventDate' value='" + eventDate + "'>");
-            out.println("<input type='hidden' name='eventTime' value='" + eventTime + "'>");
-            out.println("<input type='hidden' name='eventLocation' value='" + eventLocation + "'>");
-            out.println("<input type='hidden' name='eventDescription' value='" + eventDescription + "'>");
-            out.println("<div class='event-confirmation-buttons'>");
-            out.println("<button type='submit' name='actionType' value='Attend' class='event-confirmation-button'>Will be there!</button>");
-            out.println("<button type='submit' name='actionType' value='Not Attend' class='event-confirmation-button'>Will not make it...</button>");
-            out.println("</div>");
+            out.println("<h2>Event Confirmation</h2>");
+            // Render event details
+            out.println("<p><strong>Name:</strong> " + (eventName != null ? eventName : "") + "</p>");
+            out.println("<p><strong>Date:</strong> " + (eventDate != null ? eventDate : "") + "</p>");
+            out.println("<p><strong>Time:</strong> " + (eventTime != null ? eventTime : "") + "</p>");
+            out.println("<p><strong>Location:</strong> " + (eventLocation != null ? eventLocation : "") + "</p>");
+            out.println("<p><strong>Description:</strong> " + (eventDescription != null ? eventDescription : "") + "</p>");
+            // Only display counts if at least one of them is non-zero
+            if (countAttend > 0 || countNotAttend > 0) {
+                out.println("<p><strong>Attendees:</strong> " + countAttend + "</p>");
+                out.println("<p><strong>Not Attending:</strong> " + countNotAttend + "</p>");
+            }
+            // Display buttons
+            out.println("<form action='EventServlet' method='POST'>");
+            out.println("<input type='submit' name='actionType' value='Attend'>");
+            out.println("<input type='submit' name='actionType' value='Not Attend'>");
+            out.println("<input type='submit' name='actionType' value='Restart'>");
             out.println("</form>");
-
-            out.println("</div>");
-            out.println("</body></html>");
+            out.println("</div></body></html>");
         }
     }
-
 }

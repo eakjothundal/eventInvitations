@@ -65,7 +65,7 @@ public class EventServlet extends HttpServlet {
             eventDescription = null;
             countAttend = 0;
             countNotAttend = 0;
-            response.sendRedirect("eventForm.jsp"); // Redirect to the blank event form JSP
+            response.sendRedirect("index.jsp"); // Redirect to the blank event form JSP
             return;
         }
 

@@ -6,7 +6,6 @@
     <script src='js/form.js'></script>
 </head>
 <body>
-<h1>Welcome to the Event Invitation System</h1>
 <form id='eventForm' action='EventServlet' method='post'>
     <div>
         <label for='eventName'>Event Name:</label>

@@ -27,7 +27,7 @@ public class EventServlet extends HttpServlet {
             out.println("<script src='js/form.js'></script>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<form action='EventServlet' method='post'>");
+            out.println("<form id='eventForm'>");
             out.println("<div><label for='eventName'>Event Name:</label>");
             out.println("<input type='text' id='eventName' name='eventName' required></div>");
             out.println("<div><label for='eventDate'>Date:</label>");
@@ -38,7 +38,7 @@ public class EventServlet extends HttpServlet {
             out.println("<input type='text' id='eventLocation' name='eventLocation' required></div>");
             out.println("<div><label for='eventDescription'>Description:</label>");
             out.println("<textarea id='eventDescription' name='eventDescription' required></textarea></div>");
-            out.println("<div><input type='submit' name='actionType' value='submit'></div>");
+            out.println("<div><input type='submit' name='actionType' value='Submit'></div>");
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");

@@ -4,95 +4,119 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/EventServlet")
 public class EventServlet extends HttpServlet {
 
-    // Variables to keep track of event information and confirmations
-    private String eventName;
-    private String eventDate;
-    private String eventTime;
-    private String eventLocation;
-    private String eventDescription;
-    private int countAttend = 0;
-    private int countNotAttend = 0;
-
+    @SuppressWarnings("unchecked")
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        HttpSession session = request.getSession(true);
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            username = request.getParameter("username");
+            session.setAttribute("username", username);
+        }
+
         String actionType = request.getParameter("actionType");
+        System.out.println("Action type: " + actionType);
+        List<Event> events = (List<Event>) getServletContext().getAttribute("events");
 
-        // Retrieve event information or keep the previous one if already set
-        String newEventName = request.getParameter("eventName");
-        if (newEventName != null && !newEventName.isEmpty()) {
-            eventName = newEventName;
-        }
+        if ("Create".equals(actionType)) {
+            String eventName = request.getParameter("eventName");
+            String eventDate = request.getParameter("eventDate");
+            String eventTime = request.getParameter("eventTime");
+            String eventLocation = request.getParameter("eventLocation");
+            String eventDescription = request.getParameter("eventDescription");
 
-        String newEventDate = request.getParameter("eventDate");
-        if (newEventDate != null && !newEventDate.isEmpty()) {
-            eventDate = newEventDate;
-        }
-
-        String newEventTime = request.getParameter("eventTime");
-        if (newEventTime != null && !newEventTime.isEmpty()) {
-            eventTime = newEventTime;
-        }
-
-        String newEventLocation = request.getParameter("eventLocation");
-        if (newEventLocation != null && !newEventLocation.isEmpty()) {
-            eventLocation = newEventLocation;
-        }
-
-        String newEventDescription = request.getParameter("eventDescription");
-        if (newEventDescription != null && !newEventDescription.isEmpty()) {
-            eventDescription = newEventDescription;
-        }
-
-        // Increment counters based on actionType received
-        if ("Attend".equals(actionType)) {
-            countAttend++;
-        } else if ("Not Attend".equals(actionType)) {
-            countNotAttend++;
-        }
-
-        // Reset event and counts if "Restart" is chosen
-        if ("Restart".equals(actionType)) {
-            eventName = null;
-            eventDate = null;
-            eventTime = null;
-            eventLocation = null;
-            eventDescription = null;
-            countAttend = 0;
-            countNotAttend = 0;
-            response.sendRedirect("index.jsp"); // Redirect to the blank event form JSP
-            return;
-        }
-
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html><html><head><title>Event Confirmation</title>");
-            out.println("<link rel='stylesheet' type='text/css' href='styles.css'></head><body>");
-            out.println("<div class='event-confirmation'>");
-            out.println("<h2>Event Confirmation</h2>");
-            // Render event details
-            out.println("<p><strong>Name:</strong> " + (eventName != null ? eventName : "") + "</p>");
-            out.println("<p><strong>Date:</strong> " + (eventDate != null ? eventDate : "") + "</p>");
-            out.println("<p><strong>Time:</strong> " + (eventTime != null ? eventTime : "") + "</p>");
-            out.println("<p><strong>Location:</strong> " + (eventLocation != null ? eventLocation : "") + "</p>");
-            out.println("<p><strong>Description:</strong> " + (eventDescription != null ? eventDescription : "") + "</p>");
-            // Only display counts if at least one of them is non-zero
-            if (countAttend > 0 || countNotAttend > 0) {
-                out.println("<p><strong>Attendees:</strong> " + countAttend + "</p>");
-                out.println("<p><strong>Not Attending:</strong> " + countNotAttend + "</p>");
+            Event newEvent = new Event(username, eventName, eventDate, eventTime, eventLocation, eventDescription);
+            if (events == null) {
+                events = new ArrayList<>();
+                getServletContext().setAttribute("events", events);
             }
-            // Display buttons
-            out.println("<form action='EventServlet' method='POST'>");
-            out.println("<input type='submit' name='actionType' value='Attend'>");
-            out.println("<input type='submit' name='actionType' value='Not Attend'>");
-            out.println("<input type='submit' name='actionType' value='Restart'>");
-            out.println("</form>");
-            out.println("</div></body></html>");
+            events.add(newEvent);
+        } else if ("Attend".equals(actionType)) {
+            System.out.println("Attend");
+
+            String eventNameToConfirm = request.getParameter("eventNameToConfirm");
+            String attendee = request.getParameter("attendee"); // Retrieve the attendee from the request
+            if (events != null) {
+                for (Event event : events) {
+                    if (event.getEventName().equals(eventNameToConfirm) && !event.getUsername().equals(attendee)) {
+                        event.addConfirmation(attendee);
+                        break;
+                    }
+                }
+                response.sendRedirect("events.jsp");
+                return;
+            }
+        } else if ("Restart".equals(actionType)) {
+            session.invalidate();
+        }
+
+        response.sendRedirect("index.jsp");
+    }
+
+    public static class Event {
+        String username;
+        String eventName;
+        String eventDate;
+        String eventTime;
+        String eventLocation;
+        String eventDescription;
+        List<String> confirmations;
+
+        public Event(String username, String eventName, String eventDate, String eventTime, String eventLocation, String eventDescription) {
+            this.username = username;
+            this.eventName = eventName;
+            this.eventDate = eventDate;
+            this.eventTime = eventTime;
+            this.eventLocation = eventLocation;
+            this.eventDescription = eventDescription;
+            this.confirmations = new ArrayList<>();
+        }
+
+        // Public getter methods
+        public String getUsername() {
+            return username;
+        }
+
+        public String getEventName() {
+            return eventName;
+        }
+
+        public String getEventDate() {
+            return eventDate;
+        }
+
+        public String getEventTime() {
+            return eventTime;
+        }
+
+        public String getEventLocation() {
+            return eventLocation;
+        }
+
+        public String getEventDescription() {
+            return eventDescription;
+        }
+
+        public List<String> getConfirmations() {
+            return confirmations;
+        }
+
+        public void addConfirmation(String username) {
+            if (!this.username.equals(username) && !confirmations.contains(username)) {
+                confirmations.add(username);
+            }
         }
     }
 }

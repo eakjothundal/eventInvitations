@@ -1,11 +1,10 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('eventForm');
-    console.log('DOM fully loaded and parsed');
 
-    if (!form) return; // exit if the form is not found on the page
+    if (!form) return;
 
     form.addEventListener('submit', function (e) {
-        e.preventDefault();
+        let errorMessage = '';
 
         // // Current date and time
         // const now = new Date();
@@ -20,40 +19,30 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // const eventLocationInput = document.getElementById('eventLocation');
         // const eventDescriptionInput = document.getElementById('eventDescription');
         //
-        // console.log(`Current date and time: ${now}`);
-        //
         // // Form validation for required fields
         // if (!form.checkValidity()) {
-        //     alert('Please fill out all fields before submitting.');
-        //     return false;
+        //     errorMessage += 'Please fill out all fields before submitting.\n';
         // }
         //
         // // Minimum character count validation
         // if (eventNameInput.value.length < 3) {
-        //     alert('The event name must be at least 3 characters long.');
-        //     return false;
+        //     errorMessage += 'The event name must be at least 3 characters long.\n';
         // }
         // if (eventLocationInput.value.length < 3) {
-        //     alert('The event location must be at least 3 characters long.');
-        //     return false;
+        //     errorMessage += 'The event location must be at least 3 characters long.\n';
         // }
         // if (eventDescriptionInput.value.length < 10) {
-        //     alert('The event description must be at least 10 characters long.');
-        //     return false;
+        //     errorMessage += 'The event description must be at least 10 characters long.\n';
         // }
         //
         // // Form validation for future date/time check
         // if (eventDateTime <= now) {
-        //     alert('The event date and time must be in the future.');
-        //     return false;
+        //     errorMessage += 'The event date and time must be in the future.\n';
         // }
 
-        // Set the action to the EventServlet path and submit the form
-        form.action = 'EventServlet';
-        form.submit();
-    });
-
-    form.addEventListener('text', function (e) {
-        console.log('test');
+        if (errorMessage) {
+            alert(errorMessage);
+            e.preventDefault();
+        }
     });
 });

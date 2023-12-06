@@ -1,8 +1,5 @@
 package com.eventinvitations.eventinvitations.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Event {
     private String username;
     private String eventName;
@@ -10,16 +7,16 @@ public class Event {
     private String eventTime;
     private String eventLocation;
     private String eventDescription;
-    private List<String> confirmations;
+    private Integer attendance;
 
-    public Event(String username, String eventName, String eventDate, String eventTime, String eventLocation, String eventDescription) {
+    public Event(String username, String eventName, String eventDate, String eventTime, String eventLocation, String eventDescription, int attendance) {
         this.username = username;
         this.eventName = eventName;
         this.eventDate = eventDate;
         this.eventTime = eventTime;
         this.eventLocation = eventLocation;
         this.eventDescription = eventDescription;
-        this.confirmations = new ArrayList<>();
+        this.attendance = attendance;
     }
 
     // Public getter methods
@@ -48,13 +45,13 @@ public class Event {
         return eventDescription;
     }
 
-    public List<String> getConfirmations() {
-        return confirmations;
+    public int getAttendance() {
+        return attendance;
     }
 
-    public void addConfirmation(String username) {
-        if (!this.username.equals(username) && !confirmations.contains(username)) {
-            confirmations.add(username);
+    public void addAttendance(String username) {
+        if (!this.username.equals(username)) {
+            attendance += 1;
         }
     }
 }

@@ -30,6 +30,7 @@
     <textarea id='eventDescription' name='eventDescription' required></textarea>
   </div>
   <div>
+    <input type='hidden' name='action' value='Create'/>
     <input type='submit' value='Create Event'>
   </div>
 </form>

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.push;
+import static com.mongodb.client.model.Updates.inc;
 
 public class EventDAO {
     private final MongoCollection<Document> events;
@@ -26,38 +26,42 @@ public class EventDAO {
                 .append("eventTime", event.getEventTime())
                 .append("eventLocation", event.getEventLocation())
                 .append("eventDescription", event.getEventDescription())
-                .append("confirmations", event.getConfirmations());
+                .append("attendance", event.getAttendance()); // Storing initial attendance
 
         events.insertOne(document);
     }
 
-    public void confirmEvent(String eventName, String attendee) {
-        Document event = events.find(eq("eventName", eventName)).first();
-        if (event != null) {
-            events.updateOne(eq("eventName", eventName), push("confirmations", attendee));
-        }
+    public void incrementAttendance(String eventName) {
+        // Increment the attendance count for the event
+        events.updateOne(eq("eventName", eventName), inc("attendance", 1));
+        System.out.println("New Attendance: " + getAttendance(eventName));
     }
 
     public List<Event> getAllEvents() {
         List<Event> allEvents = new ArrayList<>();
         for (Document doc : events.find()) {
+            int attendance = doc.getInteger("attendance", 0); // Get the attendance, default to 0
             Event e = new Event(
                     doc.getString("username"),
                     doc.getString("eventName"),
                     doc.getString("eventDate"),
                     doc.getString("eventTime"),
                     doc.getString("eventLocation"),
-                    doc.getString("eventDescription"));
+                    doc.getString("eventDescription"),
+                    attendance);
 
-            // Check if confirmations list is not null
-            List<String> confirmations = (List<String>) doc.get("confirmations");
-            if (confirmations != null) {
-                for (String confirmation : confirmations) {
-                    e.addConfirmation(confirmation);
-                }
-            }
             allEvents.add(e);
         }
         return allEvents;
+    }
+
+    public int getAttendance(String eventName) {
+        Document doc = events.find(eq("eventName", eventName)).first();
+        assert doc != null;
+        return doc.getInteger("attendance", 0);
+    }
+
+    public void deleteEvent(String eventName) {
+        events.deleteOne(eq("eventName", eventName));
     }
 }

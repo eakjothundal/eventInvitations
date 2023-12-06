@@ -57,28 +57,52 @@ public class EventServlet extends HttpServlet {
                 return;
             }
         } else if ("Create".equals(action)) {
+            System.out.println("Creating event");
             String eventName = request.getParameter("eventName");
             String eventDate = request.getParameter("eventDate");
             String eventTime = request.getParameter("eventTime");
             String eventLocation = request.getParameter("eventLocation");
             String eventDescription = request.getParameter("eventDescription");
 
-            Event event = new Event(session.getAttribute("username").toString(), eventName, eventDate, eventTime, eventLocation, eventDescription);
+            Event event = new Event(session.getAttribute("username").toString(), eventName, eventDate, eventTime, eventLocation, eventDescription, 0);
             eventDAO.createEvent(event);
+            events = eventDAO.getAllEvents();
+            request.getServletContext().setAttribute("events", events);
         }
         else if ("Attend".equals(action)) {
-            String eventName = request.getParameter("eventName");
+            String eventName = request.getParameter("eventNameToAttend");
             String attendee = request.getParameter("attendee");
-            eventDAO.confirmEvent(eventName, attendee);
+
+            System.out.println("Event name: " + eventName);
+            if (!session.getAttribute("username").toString().equals(attendee)) {
+                eventDAO.incrementAttendance(eventName);
+            }
         } else if ("Logout".equals(action)) {
             session.invalidate();
             response.sendRedirect("index.jsp");
             return;
+        } else if ("Delete".equals(action)) {
+            String eventName = request.getParameter("eventNameToDelete");
+            String eventCreator = request.getParameter("eventCreator");
+
+            if (session.getAttribute("username").toString() != null && session.getAttribute("username").toString().equals(eventCreator)) {
+                eventDAO.deleteEvent(eventName);
+            } else {
+                response.sendRedirect("events.jsp?error=not_creator");
+                return;
+            }
         }
-        if ("Create".equals(action) || "Attend".equals(action)) {
+
+        if ("Create".equals(action) || "Attend".equals(action) || "Delete".equals(action)) {
             events = eventDAO.getAllEvents();
             session.setAttribute("events", events);
+            request.getServletContext().setAttribute("events", events);
+        }
+
+        if ("Attend".equals(action) || "Delete".equals(action)) {
             response.sendRedirect("events.jsp");
+        } else if ("Create".equals(action)) {
+            response.sendRedirect("form.jsp");
         }
     }
 }

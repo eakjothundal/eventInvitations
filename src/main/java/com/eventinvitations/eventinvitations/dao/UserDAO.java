@@ -4,6 +4,7 @@ import com.eventinvitations.eventinvitations.model.User;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -25,8 +26,20 @@ public class UserDAO {
     public void addUser(User user) {
         Document document = new Document();
         document.append("username", user.getUsername());
-        document.append("password", user.getPassword());
+        // Hash the password before storing it
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        document.append("password", hashedPassword);
         users.insertOne(document);
+    }
+
+    // Authenticate user with username and password
+    public boolean authenticateUser(String username, String password) {
+        User user = findUser(username);
+        if (user == null) {
+            return false;
+        }
+        // Check if the hashed password matches the one stored in the database
+        return BCrypt.checkpw(password, user.getPassword());
     }
 
     private User user(final Document document) {

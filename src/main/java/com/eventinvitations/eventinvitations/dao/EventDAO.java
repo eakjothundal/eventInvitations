@@ -49,9 +49,12 @@ public class EventDAO {
                     doc.getString("eventLocation"),
                     doc.getString("eventDescription"));
 
+            // Check if confirmations list is not null
             List<String> confirmations = (List<String>) doc.get("confirmations");
-            for (String confirmation : confirmations) {
-                e.addConfirmation(confirmation);
+            if (confirmations != null) {
+                for (String confirmation : confirmations) {
+                    e.addConfirmation(confirmation);
+                }
             }
             allEvents.add(e);
         }

@@ -3,6 +3,7 @@ package com.eventinvitations.eventinvitations;
 import com.eventinvitations.eventinvitations.dao.EventDAO;
 import com.eventinvitations.eventinvitations.dao.UserDAO;
 import com.eventinvitations.eventinvitations.model.Event;
+import com.eventinvitations.eventinvitations.model.User;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,39 +20,65 @@ public class EventServlet extends HttpServlet {
 
     @SuppressWarnings("unchecked")
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String action = request.getParameter("action");
 
         // Connect to the MongoDB database
         MongoClient mongoClient = MongoClients.create();
-        UserDAO userDAO = new UserDAO(mongoClient, "event_database");  // Replace event_database with your database name
-        EventDAO eventDAO = new EventDAO(mongoClient, "event_database");
+        UserDAO userDAO = new UserDAO(mongoClient, "eventSystemDB");
+        EventDAO eventDAO = new EventDAO(mongoClient, "eventSystemDB");
 
         HttpSession session = request.getSession(true);
-        String username = (String) session.getAttribute("username");
-        if (username == null) {
-            username = request.getParameter("username");
-            session.setAttribute("username", username);
-        }
-
-        String eventName = request.getParameter("eventName");
-        String eventDate = request.getParameter("eventDate");
-        String eventTime = request.getParameter("eventTime");
-        String eventLocation = request.getParameter("eventLocation");
-        String eventDescription = request.getParameter("eventDescription");
-
-        // If the action sent from the form is "Create", create a new event
-        String action = request.getParameter("action");
-        if ("Create".equals(action)) {
-            Event event = new Event(username, eventName, eventDate, eventTime, eventLocation, eventDescription);
-            eventDAO.createEvent(event);
-        }
-        // If the action is "Attend", add user to the event's attendees list
-        else if ("Attend".equals(action)) {
-            String attendee = request.getParameter("attendee");
-            eventDAO.confirmEvent(eventName, attendee);
-        }
 
         List<Event> events = eventDAO.getAllEvents();
-        session.setAttribute("events", events);
-        response.sendRedirect("events.jsp");
+        request.getServletContext().setAttribute("events", events);
+
+        if ("Login".equals(action)) {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+
+            if (userDAO.authenticateUser(username, password)) {
+                session.setAttribute("username", username);
+                response.sendRedirect("form.jsp");
+                return;
+            } else {
+                response.sendRedirect("index.jsp?error=invalid_credentials");
+                return;
+            }
+        } else if ("Sign Up".equals(action)) {
+            String newUsername = request.getParameter("newUsername");
+            String newPassword = request.getParameter("newPassword");
+            if (userDAO.findUser(newUsername) == null) {
+                userDAO.addUser(new User(newUsername, newPassword));
+                session.setAttribute("username", newUsername);
+                response.sendRedirect("form.jsp");
+                return;
+            } else {
+                response.sendRedirect("index.jsp?error=username_exists");
+                return;
+            }
+        } else if ("Create".equals(action)) {
+            String eventName = request.getParameter("eventName");
+            String eventDate = request.getParameter("eventDate");
+            String eventTime = request.getParameter("eventTime");
+            String eventLocation = request.getParameter("eventLocation");
+            String eventDescription = request.getParameter("eventDescription");
+
+            Event event = new Event(session.getAttribute("username").toString(), eventName, eventDate, eventTime, eventLocation, eventDescription);
+            eventDAO.createEvent(event);
+        }
+        else if ("Attend".equals(action)) {
+            String eventName = request.getParameter("eventName");
+            String attendee = request.getParameter("attendee");
+            eventDAO.confirmEvent(eventName, attendee);
+        } else if ("Logout".equals(action)) {
+            session.invalidate();
+            response.sendRedirect("index.jsp");
+            return;
+        }
+        if ("Create".equals(action) || "Attend".equals(action)) {
+            events = eventDAO.getAllEvents();
+            session.setAttribute("events", events);
+            response.sendRedirect("events.jsp");
+        }
     }
 }

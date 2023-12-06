@@ -1,5 +1,6 @@
 <%@ page import="com.eventinvitations.eventinvitations.EventServlet" %>
 <%@ page import="java.util.List" %>
+<%@page import="com.eventinvitations.eventinvitations.model.Event" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,9 +10,14 @@
 <body>
 <h2>Current Events</h2>
 <%
-    List<EventServlet.Event> events = (List<EventServlet.Event>) application.getAttribute("events");
-    if (events != null) {
-        for (EventServlet.Event event : events) {
+    @SuppressWarnings("unchecked")
+    List<Event> events = (List<Event>) application.getAttribute("events");
+    if (events == null || events.isEmpty()) {
+%>
+<p>No upcoming events found.</p>
+<%
+} else {
+    for (Event event : events) {
 %>
 <div class="event">
     <p><strong>Event Name:</strong> <%= event.getEventName() %>
@@ -30,7 +36,7 @@
     </p>
     <form action='EventServlet' method='post' class='attend-form' data-creator='<%= event.getUsername() %>'>
         <input type='hidden' name='eventNameToConfirm' value='<%= event.getEventName() %>'>
-        <input type='submit' name='actionType' value='Attend'>
+        <input type='submit' name='action' value='Attend'>
     </form>
 </div>
 <%
@@ -38,7 +44,7 @@
     }
 %>
 
-<a href="index.jsp">Back to Create Event</a>
+<a href="form.jsp">Back to Create Event</a>
 
 <script src='js/attend.js'></script>
 </body>
